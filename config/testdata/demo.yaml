@@ -1,0 +1,11 @@
+source_repo:
+  url: "http://image.src"
+  api: "api/v2.0"
+  username: "admin"
+  password: "xxx"
+destination_repo:
+  url: "https://image.dest"
+  api: "api/v2.0"
+  username: "admin"
+  password: "xxx"
+

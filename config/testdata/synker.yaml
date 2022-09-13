@@ -1,0 +1,11 @@
+source_repo:
+  url: "http://image.onecode.ict.cmcc:31104"
+  api: "api/v2.0"
+  username: "admin"
+  password: "2dFqWdkL5QbNzV"
+destination_repo:
+  url: "https://image.onecode.cmict.cloud"
+  api: "api/v2.0"
+  username: "admin"
+  password: "BDCj3ctgLnR@a@32"
+

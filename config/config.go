@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"github.com/yuanyp8/log"
-	"os"
 	"sync"
 )
 
@@ -60,5 +59,32 @@ func (r *Repo) Addr() string {
 }
 
 func init() {
-	log.ResetDefault(log.New(os.Stdout, log.DebugLevel, log.WithCaller(false)))
+	// log.ResetDefault(log.New(os.Stdout, log.DebugLevel, log.WithCaller(false)))
+	tops := []log.TeeOption{
+		{Filename: "log/success.log",
+			Ropt: log.RotateOptions{
+				MaxSize:    2,
+				MaxAge:     2,
+				MaxBackups: 2,
+				Compress:   false,
+			},
+			Lef: func(lvl log.Level) bool {
+				return lvl <= log.InfoLevel
+			},
+		},
+		{Filename: "log/error.log",
+			Ropt: log.RotateOptions{
+				MaxSize:    2,
+				MaxAge:     2,
+				MaxBackups: 2,
+				Compress:   false,
+			},
+			Lef: func(lvl log.Level) bool {
+				return lvl > log.InfoLevel
+			},
+		},
+	}
+
+	logger := log.NewLoggerTeeWithRotate(tops)
+	log.ResetDefault(logger)
 }

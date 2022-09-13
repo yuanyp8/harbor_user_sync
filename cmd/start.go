@@ -49,20 +49,36 @@ func start(cmd *cobra.Command, args []string) error {
 	// 遍历新repo
 	for _, repo := range destData.List {
 		// 根据名称获取老的权限
-		srcid := srcDict[repo.Name]
+		// 过滤到新环境的测试项目
+		var srcid int
+		v, exist := srcDict[repo.Name]
+		if exist {
+			srcid = v
+		} else {
+			continue
+		}
+
 		ret, err := core.GetRepoMemberList(srcid, config.C().SourceRepo)
 		if err != nil {
 			log.Error("get project member failed", log.Int("project_id", srcid))
-			return err
+			fmt.Println(err)
+			// 这里有错误
+			continue
 		}
+		// 如果项目成员为空则跳过该项目
 		if len(ret) == 0 {
 			continue
 		}
+		// 获取项目成员的username以及role_id， 关联新老产品的则为project name
 		for _, v := range ret {
-			fmt.Println(v.Username, v.RoleID)
+			// 注册
+			if err := core.RegisteredMember(v, repo.ID, config.C().DestinationRepo); err != nil {
+				log.Error("registered user to project failed", log.String("project_name", repo.Name), log.Int("project_id", repo.ID), log.String("username", v.Username), log.Int("role_id", v.RoleID))
+			}
+			log.Debug("registered user to project successful", log.String("project_name", repo.Name), log.Int("project_id", repo.ID), log.String("username", v.Username), log.Int("role_id", v.RoleID))
 		}
 	}
-
+	fmt.Println("----done---")
 	return nil
 }
 
